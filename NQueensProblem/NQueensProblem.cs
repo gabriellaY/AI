@@ -28,6 +28,7 @@ namespace NQueensProblem
             int move = 0;
 
             List<int> queensWithMaxConflicts = new List<int>();
+            List<int> listOfQueensWithMinConflicts = new List<int>();
 
             while (move < MAX_MOVES)
             {
@@ -57,7 +58,6 @@ namespace NQueensProblem
 
                 int worst = queensWithMaxConflicts[RandomIndex.Next(queensWithMaxConflicts.Count)];
 
-                List<int> listOfQueensWithMinConflicts = new List<int>();
                 int minConflicts = _n;
 
                 listOfQueensWithMinConflicts.Clear();
