@@ -8,148 +8,231 @@ namespace NQueensProblem
     public class NQueensProblem
     {
         private readonly int MAX_MOVES;
-        private readonly int _n;
+        private readonly int _boardSize;
+        private readonly Random RandomIndex;
 
-        public int[] Rows { get; set; }
-        private Random RandomIndex { get; set; }
+        //queens' positions
+        public int[] Queens { get; set; }
+        public int[] ConflictsInColumns { get; set; }
+
+        //primary diagonal
+        public int[] ConflictsInD1 { get; set; }
+
+        //secondary diagonal
+        public int[] ConflictsInD2 { get; set; }
+
+        public int Conflicts { get; set; }
+
 
         public NQueensProblem(int N)
         {
-            this._n = N;
-            this.MAX_MOVES = 2 * _n;
-            this.Rows = new int[_n];
+            this._boardSize = N;
+            this.MAX_MOVES = 2 * _boardSize;
+            this.Queens = new int[_boardSize];
+            this.ConflictsInColumns = new int[_boardSize];
+            this.ConflictsInD1 = new int[2 * _boardSize - 1];
+            this.ConflictsInD2 = new int[2 * _boardSize - 1];
             this.RandomIndex = new Random();
-            this.Scramble();
+
+            for (int i = 0; i < _boardSize; i++)
+            {
+                ConflictsInColumns[i] = 0;
+            }
+
+            for (int i = 0; i < 2 * N - 1; i++)
+            {
+                ConflictsInD1[i] = 0;
+                ConflictsInD2[i] = 0;
+            }
+
+            Conflicts = 0;
         }
 
         public void SolveProblem()
         {
             int moves = 0;
             int move = 0;
+            int countRestarts = 0;
 
-            List<int> queensWithMaxConflicts = new List<int>();
-            List<int> listOfQueensWithMinConflicts = new List<int>();
-
-            while (move < MAX_MOVES)
+            while (true)
             {
-                int maxConflicts = 0;
-                queensWithMaxConflicts.Clear();
+                int indexOfQueenWitMaxConflicts = GetQueenWithMaxConflicts();
 
-                for (int i = 0; i < _n; i++)
+                if (Conflicts == 0)
                 {
-                    int conflicts = GetConflictsWithQueens(Rows[i], i);
+                    Console.WriteLine($"Moves -> {moves}\nRestarts of the board: {countRestarts}");
 
-                    if (conflicts == maxConflicts)
-                    {
-                        queensWithMaxConflicts.Add(i);
-                    }
-                    else if (conflicts > maxConflicts)
-                    {
-                        maxConflicts = conflicts;
-                        queensWithMaxConflicts.Clear();
-                        queensWithMaxConflicts.Add(i);
-                    }
-                }
-
-                if (maxConflicts == 0)
-                {
                     return;
                 }
+           
+                int indexOfQueenWithMinConflicts = GetQueenWithMinConflicts(indexOfQueenWitMaxConflicts);
 
-                int worst = queensWithMaxConflicts[RandomIndex.Next(queensWithMaxConflicts.Count)];
+                int currentPosition = Queens[indexOfQueenWitMaxConflicts];
+                int nextPosition = Queens[indexOfQueenWithMinConflicts];
 
-                int minConflicts = _n;
-
-                listOfQueensWithMinConflicts.Clear();
-
-                for (int i = 0; i < _n; i++)
+                if (currentPosition != nextPosition)
                 {
-                    int conflictsCount = GetConflictsWithQueens(i, worst);
+                    Queens[indexOfQueenWitMaxConflicts] = nextPosition;
 
-                    if (conflictsCount == minConflicts)
-                    {
-                        queensWithMaxConflicts.Add(i);
-                    }
-                    else if (conflictsCount < minConflicts)
-                    {
-                        minConflicts = conflictsCount;
-                        queensWithMaxConflicts.Clear();
-                        queensWithMaxConflicts.Add(i);
-                    }
+                    ConflictsInColumns[currentPosition] -= 1;
+                    ConflictsInColumns[nextPosition] += 1;
 
-                    if (listOfQueensWithMinConflicts.Any())
-                    {
-                        Rows[worst] = listOfQueensWithMinConflicts[RandomIndex.Next(listOfQueensWithMinConflicts.Count)];
-                    }
+                    TrackConflictsInColumns(currentPosition, indexOfQueenWitMaxConflicts);
+                    TrackConflictsInColumns(nextPosition, indexOfQueenWitMaxConflicts);
 
-                    move++;
+                    TrackConflictsInD1(currentPosition, indexOfQueenWitMaxConflicts);
+                    TrackConflictsInD1(nextPosition, indexOfQueenWitMaxConflicts);
+
+                    TrackConflictsInD2(currentPosition, indexOfQueenWitMaxConflicts);
+                    TrackConflictsInD2(nextPosition, indexOfQueenWitMaxConflicts);
+
                     moves++;
+                }
 
-                    if (moves == MAX_MOVES)
-                    {
-                        Scramble();
-                        moves = 0;
-                    }
+                move++;
+
+                if (move >= MAX_MOVES)
+                {
+                    GenerateBoard();
+
+                    moves = 0;
+                    move = 0;
+                    countRestarts++;
                 }
 
             }
+
         }
 
-        public void GetSolution(int rows)
+        public string GetSolution(int rows)
         {
+            StringBuilder solutionBoard = new StringBuilder();
+
             for (int row = 0; row < rows; row++)
             {
                 for (int col = 0; col < rows; col++)
                 {
-                    // Queen
-                    if (Rows[col] == row)
+                    if (Queens[row] == col)
                     {
-                        Console.Write("* ");
+                        solutionBoard.Append(col == rows - 1 ? "*\n" : "*");
                     }
                     else
                     {
-                        Console.Write("_ ");
+                        solutionBoard.Append(col == rows - 1 ? "_\n" : "_");
                     }
                 }
-                Console.WriteLine();
+            }
+
+            return solutionBoard.ToString();
+        }
+
+        //get row with min conflicts
+        private int GetQueenWithMinConflicts(int row)
+        {
+            List<int> minConflictsQueens = new List<int>();
+
+            int minConflicts = _boardSize;
+
+            for (int column = 0; column < _boardSize; column++)
+            {
+                int numberOfConflicts = CalculateConflictsWithQueens(row, column);
+
+                if (numberOfConflicts < minConflicts)
+                {
+                    minConflicts = numberOfConflicts;
+                    minConflictsQueens.Add(column);
+                    minConflictsQueens.Clear();
+                }
+                else
+                {
+                    minConflictsQueens.Add(column);
+                }
+            }
+
+            return minConflictsQueens[RandomIndex.Next(0, minConflictsQueens.Count)];
+        }
+
+        //get column with max conflicts
+        private int GetQueenWithMaxConflicts()
+        {
+            List<int> maxConflictsQueens = new List<int>();
+
+            int maxConflicts = 0;
+
+            for (int row = 0; row < _boardSize; row++)
+            {
+                int numberOfConflicts = CalculateConflictsWithQueens(row, Queens[row]);
+
+                if (numberOfConflicts > maxConflicts)
+                {
+                    maxConflicts = numberOfConflicts;
+                    this.Conflicts = maxConflicts;
+                    maxConflictsQueens.Clear();
+                    maxConflictsQueens.Add(row);
+                }
+                else
+                {
+                    maxConflictsQueens.Add(row);
+                }
+            }
+
+            return maxConflictsQueens[RandomIndex.Next(0, maxConflictsQueens.Count)];
+        }
+
+
+        private void TrackConflictsInColumns(int row, int column)
+        {
+            ConflictsInColumns[column]++;
+        }
+
+        private void TrackConflictsInD1(int row, int column)
+        {
+            ConflictsInD1[Math.Abs(row - column)]++;
+        }
+
+        private void TrackConflictsInD2(int row, int column)
+        {
+            ConflictsInD2[row + column]++;
+        }
+
+        private int CalculateConflictsWithQueens(int row, int column)
+        {
+            int indexInD1 = Queens[Math.Abs(row - column)];
+            int indexInD2 = Queens[Math.Abs(row + column)];
+
+            return ConflictsInColumns[column] + ConflictsInD1[indexInD1] + ConflictsInD2[indexInD2] - 3;
+        }
+
+        private void RestartConflicts()
+        {
+            for (int i = 0; i < 2 * _boardSize - 1; i++)
+            {
+                if (i < _boardSize)
+                {
+                    ConflictsInColumns[i] = 0;
+                }
+
+                ConflictsInD1[i] = 0;
+                ConflictsInD2[i] = 0;
             }
         }
 
-        private int GetConflictsWithQueens(int row, int column)
+        private void GenerateBoard()
         {
-            int conflicts = 0;
+            RestartConflicts();
 
-            for (int i = 0; i < _n; i++)
+            for (int i = 0; i < _boardSize; i++)
             {
-                if (i == column)
-                {
-                    continue;
-                }
-
-                if (Rows[i] == column ||
-                    Math.Abs(Rows[i] - row) == Math.Abs(i - column))
-                {
-                    conflicts++;
-                }
+                Queens[i] = i;
             }
 
-            return conflicts;
-        }
-
-        private void Scramble()
-        {
-            for (int i = 0; i < _n; i++)
+            for (int i = 0; i < _boardSize; i++)
             {
-                Rows[i] = i;
-            }
+                int j = RandomIndex.Next(_boardSize);
+                int rowToSwap = Queens[i];
 
-            for (int i = 0; i < _n; i++)
-            {
-                int j = RandomIndex.Next(_n);
-                int rowToSwap = Rows[i];
-
-                Rows[i] = Rows[j];
-                Rows[j] = rowToSwap;
+                Queens[i] = Queens[j];
+                Queens[j] = rowToSwap;
             }
         }
     }
