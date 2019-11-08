@@ -50,6 +50,7 @@ namespace NQueensProblem
 
         public void SolveProblem()
         {
+            GenerateBoard();
             int moves = 0;
             int move = 0;
             int countRestarts = 0;
@@ -64,21 +65,21 @@ namespace NQueensProblem
 
                     return;
                 }
-           
+
                 int indexOfQueenWithMinConflicts = GetQueenWithMinConflicts(indexOfQueenWitMaxConflicts);
 
                 int currentPosition = Queens[indexOfQueenWitMaxConflicts];
                 int nextPosition = Queens[indexOfQueenWithMinConflicts];
 
-                if (currentPosition != nextPosition)
+                if (currentPosition != nextPosition && nextPosition != -1)
                 {
                     Queens[indexOfQueenWitMaxConflicts] = nextPosition;
 
                     ConflictsInColumns[currentPosition] -= 1;
                     ConflictsInColumns[nextPosition] += 1;
 
-                    TrackConflictsInColumns(currentPosition, indexOfQueenWitMaxConflicts);
-                    TrackConflictsInColumns(nextPosition, indexOfQueenWitMaxConflicts);
+                    //TrackConflictsInColumns(currentPosition, indexOfQueenWitMaxConflicts);
+                    //TrackConflictsInColumns(nextPosition, indexOfQueenWitMaxConflicts);
 
                     TrackConflictsInD1(currentPosition, indexOfQueenWitMaxConflicts);
                     TrackConflictsInD1(nextPosition, indexOfQueenWitMaxConflicts);
@@ -135,19 +136,25 @@ namespace NQueensProblem
 
             for (int column = 0; column < _boardSize; column++)
             {
-                int numberOfConflicts = CalculateConflictsWithQueens(row, column);
+                int numberOfConflicts = CalculateConflictsWithQueens(column, row);
 
                 if (numberOfConflicts < minConflicts)
                 {
                     minConflicts = numberOfConflicts;
-                    minConflictsQueens.Add(column);
                     minConflictsQueens.Clear();
+                    minConflictsQueens.Add(column);
                 }
                 else
                 {
                     minConflictsQueens.Add(column);
                 }
             }
+
+            //if (minConflictsQueens.Count == 0)
+            //{
+            //    GenerateBoard();
+            //    return 0;
+            //}
 
             return minConflictsQueens[RandomIndex.Next(0, minConflictsQueens.Count)];
         }
@@ -158,6 +165,7 @@ namespace NQueensProblem
             List<int> maxConflictsQueens = new List<int>();
 
             int maxConflicts = 0;
+            this.Conflicts = 0;
 
             for (int row = 0; row < _boardSize; row++)
             {
@@ -197,10 +205,22 @@ namespace NQueensProblem
 
         private int CalculateConflictsWithQueens(int row, int column)
         {
-            int indexInD1 = Queens[Math.Abs(row - column)];
-            int indexInD2 = Queens[Math.Abs(row + column)];
+            int d1 = ConflictsInD1[Math.Abs(row - column)];
+            int d2 = ConflictsInD2[Math.Abs(row + column)];
 
-            return ConflictsInColumns[column] + ConflictsInD1[indexInD1] + ConflictsInD2[indexInD2] - 3;
+            int col = ConflictsInColumns[column];
+
+            int result = col + d1 + d2;
+
+            if (result >= 3)
+            {
+                return result - 3;
+            }
+            else
+            {
+                return result;
+            }
+            
         }
 
         private void RestartConflicts()
@@ -223,17 +243,12 @@ namespace NQueensProblem
 
             for (int i = 0; i < _boardSize; i++)
             {
-                Queens[i] = i;
-            }
+                Queens[i] = GetQueenWithMinConflicts(i);
+                ConflictsInColumns[Queens[i]] += 1;
 
-            for (int i = 0; i < _boardSize; i++)
-            {
-                int j = RandomIndex.Next(_boardSize);
-                int rowToSwap = Queens[i];
-
-                Queens[i] = Queens[j];
-                Queens[j] = rowToSwap;
-            }
+                TrackConflictsInD1(i, Queens[i]);
+                TrackConflictsInD2(i, Queens[i]);
+            }          
         }
     }
 }
