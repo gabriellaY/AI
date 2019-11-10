@@ -7,9 +7,9 @@ namespace NQueensProblem
     public class NQueensProblem
     {
         private readonly int _boardSize;
-        private readonly int diagonalSize;
+        private readonly int _diagonalSize;
         private readonly Random _randomIndex;
-        private readonly int[] _queens; //queens' positions
+        private  int[] _queens; //queens' positions
 
         private int[] _conflictsInColumns;
         private int[] _conflictsInD1; //primary diagonal
@@ -18,11 +18,11 @@ namespace NQueensProblem
         public NQueensProblem(int N)
         {
             this._boardSize = N;
-            diagonalSize = 2 * _boardSize - 1;
+            _diagonalSize = 2 * _boardSize - 1;
             _queens = new int[_boardSize];
             _conflictsInColumns = new int[_boardSize];
-            _conflictsInD1 = new int[diagonalSize];
-            _conflictsInD2 = new int[diagonalSize];
+            _conflictsInD1 = new int[_diagonalSize];
+            _conflictsInD2 = new int[_diagonalSize];
             _randomIndex = new Random();
 
             GenerateBoard();
@@ -61,7 +61,7 @@ namespace NQueensProblem
                 int currentPosition = _queens[maxConflicts];
                 int nextPosition = minConflicts;
 
-                if (currentPosition != nextPosition && nextPosition != -1)
+                if (currentPosition != nextPosition)
                 {
                     _queens[maxConflicts] = nextPosition;
 
@@ -212,8 +212,9 @@ namespace NQueensProblem
         private void Restart()
         {
             _conflictsInColumns = new int[_boardSize];
-            _conflictsInD1 = new int[diagonalSize];
-            _conflictsInD2 = new int[diagonalSize];
+            _conflictsInD1 = new int[_diagonalSize];
+            _conflictsInD2 = new int[_diagonalSize];
+            _queens = new int[_boardSize];
 
             GenerateBoard();
         }

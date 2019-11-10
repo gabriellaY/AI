@@ -7,7 +7,7 @@ namespace NQueensProblem
     {
         static void Main(string[] args)
         {
-            int N = 15;
+            int N = 10;
 
             NQueensProblem queensProblem = new NQueensProblem(N);
 
