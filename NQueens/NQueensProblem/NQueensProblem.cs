@@ -38,7 +38,7 @@ namespace NQueensProblem
             {
                 int indexOfQueenWitMaxConflicts = GetQueenWithMaxConflicts();
 
-                if (indexOfQueenWitMaxConflicts == 0)
+                if (indexOfQueenWitMaxConflicts == -1)
                 {
                     Console.WriteLine($"Moves -> {moves}\nRestarts of the board -> {countRestarts}");
 
@@ -71,7 +71,6 @@ namespace NQueensProblem
 
                     moves = 0;
                     move = 0;
-                    countRestarts++;
                     countRestarts++;
 
                     continue;
@@ -115,7 +114,9 @@ namespace NQueensProblem
                     continue;
                 }
 
-                int numberOfConflicts = CalculateConflictsWithQueens(column, row);
+                int numberOfConflicts = _conflictsInColumns[column] 
+                    + _conflictsInD1[_queens[row] - column + _boardSize - 1] 
+                    + _conflictsInD2[_queens[row] + column];
 
                 if (numberOfConflicts < minConflicts)
                 {
@@ -139,19 +140,21 @@ namespace NQueensProblem
 
             int maxConflicts = 0;
 
-            for (int row = 0; row < _boardSize; row++)
+            for (int i = 0; i < _boardSize; i++)
             {
-                int numberOfConflicts = CalculateConflictsWithQueens(row, _queens[row]);
+                int numberOfConflicts = _conflictsInColumns[i]
+                   + _conflictsInD1[_queens[i] - i + _boardSize - 1]
+                   + _conflictsInD2[_queens[i] + i] - 3;
 
                 if (numberOfConflicts > maxConflicts)
                 {
                     maxConflicts = numberOfConflicts;
                     maxConflictsQueens.Clear();
-                    maxConflictsQueens.Add(row);
+                    maxConflictsQueens.Add(i);
                 }
                 else
                 {
-                    maxConflictsQueens.Add(row);
+                    maxConflictsQueens.Add(i);
                 }
             }
 
@@ -172,21 +175,21 @@ namespace NQueensProblem
             _conflictsInD2[row + _queens[row]]++;
         }
 
-        private int CalculateConflictsWithQueens(int row, int column)
-        {
-            int indexInD1;
+        //private int CalculateConflictsWithQueens(int row, int column)
+        //{
+        //    int indexInD1;
 
-            if (row <= column)
-            {
-                indexInD1 = _boardSize - 1 - Math.Abs(row - column);
-            }
-            else
-            {
-                indexInD1 = _boardSize - 1 + Math.Abs(row - column);
-            }
+        //    if (row <= column)
+        //    {
+        //        indexInD1 = _boardSize - 1 - Math.Abs(row - column);
+        //    }
+        //    else
+        //    {
+        //        indexInD1 = _boardSize - 1 + Math.Abs(row - column);
+        //    }
 
-            return _conflictsInD1[indexInD1] + _conflictsInD2[Math.Abs(row + column)] + _conflictsInColumns[column];
-        }
+        //    return _conflictsInD1[indexInD1] + _conflictsInD2[Math.Abs(row + column)] + _conflictsInColumns[column];
+        //}
 
         private void Restart()
         {
