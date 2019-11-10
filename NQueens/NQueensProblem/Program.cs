@@ -7,7 +7,7 @@ namespace NQueensProblem
     {
         static void Main(string[] args)
         {
-            int N = 10;
+            int N = 15;
 
             NQueensProblem queensProblem = new NQueensProblem(N);
 
@@ -16,7 +16,7 @@ namespace NQueensProblem
             queensProblem.SolveProblem();
 
             timer.Stop();
-            Console.WriteLine(0.001 * timer.ElapsedMilliseconds);
+            Console.WriteLine($"Time -> {0.001 * timer.ElapsedMilliseconds}");
 
             //var solution = queensProblem.GetSolution(N);
             //Console.WriteLine(solution);

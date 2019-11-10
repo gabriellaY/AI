@@ -122,7 +122,6 @@ namespace NQueensProblem
             return indexInD1;
         }
 
-        //get row with min conflicts
         private int GetQueenWithMinConflicts(int row)
         {
             List<int> minConflictsQueens = new List<int>();
@@ -153,7 +152,6 @@ namespace NQueensProblem
             return minConflictsQueens[_randomIndex.Next(0, minConflictsQueens.Count)];
         }
 
-        //get column with max conflicts
         private int GetQueenWithMaxConflicts()
         {
             List<int> maxConflictsQueens = new List<int>();
@@ -221,13 +219,10 @@ namespace NQueensProblem
 
         private void GenerateBoard()
         {
-            //for (int i = 0; i < _boardSize; i++)
-            //{
-            //    _queens[i] = GetQueenWithMinConflicts(i);
-            //}
 
             for (int i = 0; i < _boardSize; i++)
             {
+                _queens[i] = GetQueenWithMinConflicts(i);
                 TrackConflicts(i, _queens[i]);
             }
         }
