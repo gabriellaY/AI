@@ -192,7 +192,7 @@ namespace NQueensProblem
 
             _conflictsInColumns[column]++;
             _conflictsInD1[indexInD1]++;
-            _conflictsInD2[row + _queens[row]]++;
+            _conflictsInD2[row + column]++;
         }
 
         private int CalculateConflictsWithQueens(int row, int column)
@@ -220,10 +220,10 @@ namespace NQueensProblem
 
         private void GenerateBoard()
         {
-            for (int i = 0; i < _boardSize; i++)
-            {
-                _queens[i] = GetQueenWithMinConflicts(i);
-            }
+            //for (int i = 0; i < _boardSize; i++)
+            //{
+            //    _queens[i] = GetQueenWithMinConflicts(i);
+            //}
 
             for (int i = 0; i < _boardSize; i++)
             {
