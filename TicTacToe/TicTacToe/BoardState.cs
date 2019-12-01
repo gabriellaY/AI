@@ -8,8 +8,10 @@ namespace TicTacToe
         public readonly int SIZE = 3;
 
         public char[,] Board { get; set; }
+        // Why do you use [,]?
 
         public Player Player { get; set; }
+        // Add empty player
 
         public BoardState()
         {
@@ -21,11 +23,12 @@ namespace TicTacToe
             {
                 for (int column = 0; column < SIZE; column++)
                 {
-                    Board[row, column] = '_';
+                    Board[row, column] = Player.E;
                 }
             }
         }
 
+        // All ifs were with [0, 0]
         //checks if the state is winning one and returns tha score
         public int EvaluateWinningScore(int depth)
         {
@@ -48,11 +51,11 @@ namespace TicTacToe
             {
                 if (Board[row, 0] == Board[row, 1] && Board[row, 1] == Board[row, 2])
                 {
-                    if (Board[0, 0] == Player.X)
+                    if (Board[row, 0] == Player.X)
                     {
                         return 10 - depth;
                     }
-                    else if (Board[0, 0] == Player.O)
+                    else if (Board[row, 0] == Player.O)
                     {
                         return -10 + depth;
                     }
@@ -64,11 +67,11 @@ namespace TicTacToe
             {
                 if (Board[0, column] == Board[1, column] && Board[1, column] == Board[2, column])
                 {
-                    if (Board[0, 0] == Player.X)
+                    if (Board[0, column] == Player.X)
                     {
                         return 10 - depth;
                     }
-                    else if (Board[0, 0] == Player.O)
+                    else if (Board[0, column] == Player.O)
                     {
                         return depth - 10;
                     }
@@ -97,8 +100,8 @@ namespace TicTacToe
 
         public bool IsGameOver()
         {
-            if (((Board[0, 0] == Board[1, 1] && Board[1, 1] == Board[2, 2]) ||
-                (Board[0, 2] == Board[1, 1] && Board[1, 1] == Board[2, 0])) && (Board[0, 0] != '_'))
+            if (((Board[0, 0] == Board[1, 1] && Board[1, 1] == Board[2, 2] && Board[0, 0] != '_') ||
+                (Board[0, 2] == Board[1, 1] && Board[1, 1] == Board[2, 0] && Board[0, 2] != '_')))
             {
                 return true;
             }
@@ -106,7 +109,7 @@ namespace TicTacToe
             for (int row = 0; row < SIZE; row++)
             {
                 if ((Board[row, 0] == Board[row, 1] && Board[row, 1] == Board[row, 2]) &&
-                    (Board[0, 0] != '_'))
+                    (Board[row, 0] != '_'))
                 {
                     return true;
                 }
@@ -115,7 +118,7 @@ namespace TicTacToe
             for (int column = 0; column < SIZE; column++)
             {
                 if ((Board[0, column] == Board[1, column] && Board[1, column] == Board[2, column]) &&
-                    (Board[0, 0] != '_'))
+                    (Board[0, column] != '_'))
                 {
                     return true;
                 }
