@@ -8,10 +8,8 @@ namespace TicTacToe
         public readonly int SIZE = 3;
 
         public char[,] Board { get; set; }
-        // Why do you use [,]?
 
         public Player Player { get; set; }
-        // Add empty player
 
         public BoardState()
         {
@@ -28,7 +26,6 @@ namespace TicTacToe
             }
         }
 
-        // All ifs were with [0, 0]
         //checks if the state is winning one and returns tha score
         public int EvaluateWinningScore(int depth)
         {
@@ -67,7 +64,7 @@ namespace TicTacToe
                     }
                     else if (Board[row, 0] == Player.X)
                     {
-                        return depth - 10
+                        return depth - 10;
                     }
                 }
             }
@@ -148,6 +145,11 @@ namespace TicTacToe
                         return Player.O.ToString();
                     }
                 }
+            }
+
+            if (IsFull())
+            {
+                return "-";
             }
 
             return "";
@@ -241,7 +243,6 @@ namespace TicTacToe
                 }
                 Console.WriteLine();
             }
-
             Console.WriteLine();
         }
 
