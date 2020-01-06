@@ -82,6 +82,62 @@ namespace TicTacToe
             return 0;
         }
 
+        public string HasWinner()
+        {
+            //check if there is a diagonal win
+            if ((Board[0, 0] == Board[1, 1] && Board[1, 1] == Board[2, 2]) ||
+                (Board[0, 2] == Board[1, 1] && Board[1, 1] == Board[2, 0]))
+            {
+                if (Board[0, 0] == Player.X)
+                {
+                    return Player.X.ToString();
+                }
+                else if (Board[0, 0] == Player.O)
+                {
+                    return Player.O.ToString();
+                }
+            }
+
+            //check if there is a row win
+            for (int row = 0; row < SIZE; row++)
+            {
+                if (Board[row, 0] == Board[row, 1] && Board[row, 1] == Board[row, 2])
+                {
+                    if (Board[row, 0] == Player.X)
+                    {
+                        return Player.X.ToString();
+                    }
+                    else if (Board[row, 0] == Player.O)
+                    {
+                        return Player.O.ToString();
+                    }
+                }
+            }
+
+            //check if there is a column win
+            for (int column = 0; column < SIZE; column++)
+            {
+                if (Board[0, column] == Board[1, column] && Board[1, column] == Board[2, column])
+                {
+                    if (Board[0, column] == Player.X)
+                    {
+                        return Player.X.ToString();
+                    }
+                    else if (Board[0, column] == Player.O)
+                    {
+                        return Player.O.ToString();
+                    }
+                }
+            }
+
+            if(IsFull())
+            {
+                return "Draw";
+            }
+
+            return "";
+        }
+
         public bool IsFull()
         {
             for (int row = 0; row < SIZE; row++)

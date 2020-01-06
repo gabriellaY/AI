@@ -143,9 +143,10 @@ namespace TicTacToe
 
                 Console.WriteLine("Computer's move");
                 var availableMoves = TicTacToeBoard.GetAvailablePositions();
+
                 foreach (var currMove in availableMoves)
                 {
-                    TicTacToeBoard.Board[currMove.Item1, currMove.Item2] = MaxPlayer;
+                    TicTacToeBoard.Board[currMove.Item1, currMove.Item2] = MinPlayer;
                     int minimaxScore = Minimax(false, 0);
                     // Keep the move scores in something
                     scores.Add(minimaxScore);
@@ -156,9 +157,52 @@ namespace TicTacToe
                 // For each avaiable move, call minimax
                 var index = scores.FindIndex(score => score == scores.Max());
 
-                var move = availableMoves[index];
-                TicTacToeBoard.Board[move.Item1, move.Item2] = TicTacToeBoard.Player.O;
-                TicTacToeBoard.Print();
+                string winner = TicTacToeBoard.HasWinner();
+
+                if (winner == "X")
+                {
+                    Console.WriteLine("You win!");
+                    break;
+                }
+                else if (winner == "O")
+                {
+                    Console.WriteLine("Computer wins!");
+                    break;
+                }
+                
+                //else if (score == 0)
+                //{
+                //    Console.WriteLine("It is a draw game.");
+                //    break;
+                //}
+
+                //else
+                //{
+                //    if (scores[index] == 10)
+                //    {
+                //        Console.WriteLine("You win!");
+                //        break;
+                //    }
+                //    else if (scores[index] == -10)
+                //    {
+                //        Console.WriteLine("Computer wins!");
+                //        break;
+                //    }
+                //    else if (scores[index] == 0)
+                //    {
+                //        Console.WriteLine("It is a draw game.");
+                //        break;
+                //    }
+                //}
+
+                if (index != -1)
+                {
+                    var move = availableMoves[index];
+
+                    TicTacToeBoard.Board[move.Item1, move.Item2] = TicTacToeBoard.Player.O;
+                    TicTacToeBoard.Print();
+                }
+                
             }
 
         }
