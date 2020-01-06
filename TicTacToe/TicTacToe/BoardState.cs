@@ -67,7 +67,7 @@ namespace TicTacToe
                     }
                     else if (Board[row, 0] == Player.X)
                     {
-                        return -10 + depth;
+                        return depth - 10
                     }
                 }
             }
