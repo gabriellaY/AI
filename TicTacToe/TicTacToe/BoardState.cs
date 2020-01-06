@@ -33,14 +33,24 @@ namespace TicTacToe
         public int EvaluateWinningScore(int depth)
         {
             //check if there is a diagonal win
-            if ((Board[0, 0] == Board[1, 1] && Board[1, 1] == Board[2, 2]) ||
-                (Board[0, 2] == Board[1, 1] && Board[1, 1] == Board[2, 0]))
+            if (Board[0, 0] == Board[1, 1] && Board[1, 1] == Board[2, 2])
             {
-                if (Board[0, 0] == Player.X)
+                if (Board[0, 0] == Player.O)
                 {
                     return 10 - depth;
                 }
-                else if (Board[0, 0] == Player.O)
+                else if (Board[0, 0] == Player.X)
+                {
+                    return depth - 10;
+                }
+            }
+            else if (Board[0, 2] == Board[1, 1] && Board[1, 1] == Board[2, 0])
+            {
+                if (Board[0, 2] == Player.O)
+                {
+                    return 10 - depth;
+                }
+                else if (Board[0, 2] == Player.X)
                 {
                     return depth - 10;
                 }
@@ -51,11 +61,11 @@ namespace TicTacToe
             {
                 if (Board[row, 0] == Board[row, 1] && Board[row, 1] == Board[row, 2])
                 {
-                    if (Board[row, 0] == Player.X)
+                    if (Board[row, 0] == Player.O)
                     {
                         return 10 - depth;
                     }
-                    else if (Board[row, 0] == Player.O)
+                    else if (Board[row, 0] == Player.X)
                     {
                         return -10 + depth;
                     }
@@ -67,11 +77,11 @@ namespace TicTacToe
             {
                 if (Board[0, column] == Board[1, column] && Board[1, column] == Board[2, column])
                 {
-                    if (Board[0, column] == Player.X)
+                    if (Board[0, column] == Player.O)
                     {
                         return 10 - depth;
                     }
-                    else if (Board[0, column] == Player.O)
+                    else if (Board[0, column] == Player.X)
                     {
                         return depth - 10;
                     }
@@ -85,14 +95,24 @@ namespace TicTacToe
         public string HasWinner()
         {
             //check if there is a diagonal win
-            if ((Board[0, 0] == Board[1, 1] && Board[1, 1] == Board[2, 2]) ||
-                (Board[0, 2] == Board[1, 1] && Board[1, 1] == Board[2, 0]))
+            if (Board[0, 0] == Board[1, 1] && Board[1, 1] == Board[2, 2])
             {
                 if (Board[0, 0] == Player.X)
                 {
                     return Player.X.ToString();
                 }
                 else if (Board[0, 0] == Player.O)
+                {
+                    return Player.O.ToString();
+                }
+            }
+            else if (Board[0, 2] == Board[1, 1] && Board[1, 1] == Board[2, 0])
+            {
+                if (Board[0, 2] == Player.X)
+                {
+                    return Player.X.ToString();
+                }
+                else if (Board[0, 2] == Player.O)
                 {
                     return Player.O.ToString();
                 }
@@ -128,11 +148,6 @@ namespace TicTacToe
                         return Player.O.ToString();
                     }
                 }
-            }
-
-            if(IsFull())
-            {
-                return "Draw";
             }
 
             return "";

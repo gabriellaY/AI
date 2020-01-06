@@ -147,7 +147,7 @@ namespace TicTacToe
                 foreach (var currMove in availableMoves)
                 {
                     TicTacToeBoard.Board[currMove.Item1, currMove.Item2] = MinPlayer;
-                    int minimaxScore = Minimax(false, 0);
+                    int minimaxScore = Minimax(false, 0);                  
                     // Keep the move scores in something
                     scores.Add(minimaxScore);
                     TicTacToeBoard.Board[currMove.Item1, currMove.Item2] = TicTacToeBoard.Player.E;
@@ -204,7 +204,7 @@ namespace TicTacToe
                 }
                 
             }
-
+            Console.WriteLine("It is a draw.");
         }
     }
 }
